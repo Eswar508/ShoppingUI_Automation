@@ -45,10 +45,8 @@ class exe:
         else: return
         element.remove.click()
         start=time.perf_counter()
-        print("--------------------")
         result=wait_until(element.driver,lambda driver:element.cart_first_element.is_displayed() is False)
         print(result)
-        print("--------------------")
         end=time.perf_counter()
         interval=end-start
         print(f"Time taken for product removal responsiveness test:{interval} and {interval:.2f} seconds")
