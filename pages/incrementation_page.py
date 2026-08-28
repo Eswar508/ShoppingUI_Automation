@@ -3,7 +3,7 @@ import pytest
 from utils.wait import wait_until
 import utils.helper_fun as fun
 import utils.attach_results as attach_results
-class Exe:
+class IncrementPage:
     @classmethod
     def validate_increment(cls,element):
         # Get the initial number of items in the cart

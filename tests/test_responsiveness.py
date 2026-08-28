@@ -1,4 +1,4 @@
-from exe.responsiveness import Exe
+from pages.responsiveness_page import ResponsivenessPage
 import utils.helper_fun as fun
 from utils.wait import  wait_until
 import time,pytest
@@ -25,4 +25,4 @@ def test_prod_click_responsiveness(element):
     print(f"Time taken for product click responsiveness test:{interval} and {interval:.2f} seconds")
     assert interval<=0.5
 def test_prod_remove_responsiveness(element):
-    Exe.validate_prod_remove_responsiveness(element)
+    ResponsivenessPage.validate_prod_remove_responsiveness(element)

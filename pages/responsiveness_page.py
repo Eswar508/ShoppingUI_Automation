@@ -3,7 +3,7 @@ import pytest
 from utils.wait import wait_until
 import utils.helper_fun as fun
 import utils.attach_results as attach_results
-class Exe:
+class ResponsivenessPage:
     @classmethod
     def validate_cart_responsivenessI(element):
         start=time.perf_counter()
