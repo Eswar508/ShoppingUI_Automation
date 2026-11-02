@@ -12,6 +12,7 @@ class Element():
         self.driver=driver
         self.selectors=by_selector()
         self.elements=self.selectors.keys()
+        self.wait=WebDriverWait(self.driver,10)
     @property
     def prod_container(self):
         selector=(By.CSS_SELECTOR, self.selectors["prod_container"])
@@ -34,9 +35,13 @@ class Element():
         return ele
     @property
     def checkout(self):
-        selector=(By.CSS_SELECTOR, self.selectors["checkout"])
-        ele=wait(self.driver, selector)
-        return ele
+        try:
+            E=self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.selectors["checkout"])))
+            return E
+        except:
+            selector=(By.CSS_SELECTOR, self.selectors["checkout"])
+            ele=wait(self.driver, selector)
+            return ele
     @property
     def cart_first_element(self):
         selector=(By.CSS_SELECTOR, self.selectors["cart_first_element"])
@@ -97,9 +102,14 @@ class Element():
         selector=(By.CSS_SELECTOR, self.selectors["catalog"])
         ele=wait(self.driver, selector)
         return ele
-    @property
+    @property   
     def add_to_cart(self):
         selector=(By.CSS_SELECTOR, self.selectors["add to cart"])
+        ele=wait(self.driver, selector)
+        return ele
+    @property
+    def prod_num(self):
+        selector=(By.CSS_SELECTOR, self.selectors["prod_num"])
         ele=wait(self.driver, selector)
         return ele
 #--------------------------------------------------------------------------------------------------------------------
@@ -117,31 +127,23 @@ class Element():
     @property
     def catalog_list(self):
         return self.catalog_container.find_elements(By.XPATH,".//a")
-    def catalogs_prod_name(self,prod):
-        selector=(By.XPATH, ".//h3")
-        ele=wait(prod, selector)
-        return ele
-    def catalogs_prod_price(self,prod):
-        selector=(By.XPATH, ".//h4")
-        ele=wait(prod, selector)
-        return ele
     @property
     def checkouts_prod_list(self):
         return self.checkouts_prod_container.find_elements(By.CLASS_NAME,"row")
-    def checkouts_prod_name(self,prod):
-        selector=(By.CLASS_NAME, "info")
+    def checkout_prod_price(self,prod):
+        selector=(By.CLASS, "two columns price desktop")
         ele=wait(prod, selector)
         return ele
-    def checkouts_prod_price(self,prod):
-        selector=(By.CLASS_NAME, "two columns price desktop")
-        ele=wait(prod, selector)
-        return ele
-    def checkouts_prod_num(self,prod):
+    def checkout_prod_num(self,prod):
         selector=(By.TAG_NAME, "input")
         ele=wait(prod, selector)
         return ele
     def checkouts_prod_total(self,prod):
-        selector=(By.CLASS_NAME, "two columns total desktop")
+        selector=(By.CSS_SELECTOR, self.selectors["checkouts prod total"])
         ele=wait(prod, selector)
         return ele
-    
+    @property
+    def checkouts_total(self):
+        selector=(By.CSS_SELECTOR,self.selectors["checkouts total"])
+        ele=self.wait.until(EC.presence_of_element_located(selector))
+        return ele

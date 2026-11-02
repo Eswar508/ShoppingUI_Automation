@@ -5,7 +5,7 @@ from utils.elements import Element
 import time
 @pytest.fixture(scope="function")
 def driver():
-    driver=webdriver.Chrome()
+    driver = webdriver.Edge()
     driver.get("https://sauce-demo.myshopify.com/")
     yield driver
     driver.quit()

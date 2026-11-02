@@ -15,5 +15,6 @@
     "checkouts checkout":"#checkout",
     "checkouts total":"#cart > form > div.twelve.columns.alpha.omega.row > div.six.columns.omega.cart.total > h2",
     "home":"#main-menu > li:nth-child(1) > a",
-    "catalog":"#main-menu > li:nth-child(2) > a"
+    "catalog":"#main-menu > li:nth-child(2) > a",
+    "prod_num":"#drawer > div > form > div.row.first > div.two.columns.quantity.desktop"
 }

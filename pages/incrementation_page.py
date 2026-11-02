@@ -1,26 +1,34 @@
 import time
 import pytest
-from utils.wait import wait_until
+from conftest import element
+from utils.wait import wait, wait_until
 import utils.helper_fun as fun
 import utils.attach_results as attach_results
-class IncrementPage:
+class AddToCartPage:
     @classmethod
-    def validate_increment(cls,element):
-        # Get the initial number of items in the cart
-        initial_cart_num = int(element.mycart_num.text[1:-1])  # Assuming the text is in the format "(X)"
-        fun.add_to_cart(element)
-        wait_until(element.driver,lambda driver: int(element.mycart_num.text[1:-1]) != initial_cart_num)
-        time.sleep(3)  # Wait for the cart to update
-        final_cart_num = int(element.mycart_num.text[1:-1])
-        # Assert that the number of items in the cart has increased by 1
-        assert final_cart_num == initial_cart_num + 1, f"Expected {initial_cart_num + 1} items in cart, but found {final_cart_num}."
+    def increment_items_to_cart(cls,element,item_index,clicking_no):
+        try:prod=element.prod_list[item_index]
+        except:pytest.skip,f"no items exist more than {item_index-1}"
+        iN=int(element.mycart_num.text[1:-1]) 
+        prod.click()
+        for _ in range(clicking_no,0,-1):
+            element.add_to_cart.click()
+            wait_until(element.driver,lambda driver: int(element.mycart_num.text[1:-1]) != iN)
+            iN+=1
+            
     @classmethod
-    def validate_catolog_increment(cls,element):
+    def add_catalog_items_to_cart(cls,element,items_index=0,clicking_no=1):
         element.catalog.click()
-        initial_cart_num = int(element.mycart_num.text[1:-1])  # Assuming the text is in the format "(X)"
-        fun.add_catalog_to_cart(element, items_index=0)
-        wait_until(element.driver,lambda driver: int(element.mycart_num.text[1:-1]) != initial_cart_num)
-        end=time.perf_counter()
-        final_cart_num = int(element.mycart_num.text[1:-1])
-        # Assert that the number of items in the cart has increased by 1
-        assert final_cart_num == initial_cart_num + 1, f"Expected {initial_cart_num + 1} items in cart, but found {final_cart_num}."
+        try:
+            prod=element.catalog_list[items_index]
+        except:
+            pytest.skip,f"no items exist more than {items_index-1}" 
+        element.wait.until(lambda driver:(prod.is_enabled()) is True) 
+        prod.click()
+        wait_until(element.driver,lambda driver:element.add_to_cart.is_displayed() is True)
+        iN=int(element.mycart_num.text[1:-1]) 
+        for _ in range(clicking_no,0,-1):
+            element.add_to_cart.click()
+            wait_until(element.driver,lambda driver: int(element.mycart_num.text[1:-1]) != iN)
+            iN+=1
+            
