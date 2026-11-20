@@ -1,0 +1,103 @@
+name: UI tests and reports
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  ui-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      report_available: ${{ steps.report-status.outputs.available }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Prepare report output
+        run: |
+          mkdir -p reports
+          chmod 777 reports
+
+      - name: Run Selenium tests in Docker
+        id: run-tests
+        continue-on-error: true
+        run: docker compose run --build --rm ui-tests
+
+      - name: Set up Java for Allure
+        if: always()
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Generate Allure HTML report
+        if: always()
+        run: |
+          if find reports/allure-results -name '*-result.json' -print -quit 2>/dev/null | grep -q .; then
+            npx --yes allure-commandline@2.34.1 generate reports/allure-results --clean -o reports/allure-report
+          else
+            echo "No Allure test result files were generated."
+          fi
+
+      - name: Check for an Allure dashboard
+        id: report-status
+        if: always()
+        run: |
+          if test -f reports/allure-report/index.html; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-reports
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Mark failed test run
+        if: always() && steps.run-tests.outcome == 'failure'
+        run: exit 1
+
+  publish-dashboard:
+    needs: ui-tests
+    if: always() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && needs.ui-tests.outputs.report_available == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Download test reports
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-test-reports
+          path: reports
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Allure dashboard
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: reports/allure-report
+
+      - name: Publish Allure dashboard
+        id: deployment
+        uses: actions/deploy-pages@v4

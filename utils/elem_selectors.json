@@ -3,6 +3,8 @@
     "mycart_button":"#minicart > a.toggle-drawer.cart.desktop",
     "mycart_num":"#cart-target-desktop",
     "checkout":"#minicart > a.checkout",
+    "cart_prod_name":"#drawer > div > form > div.row.first > div.nine.columns.description > div > h3 > a",
+    "cart_prod_num":"#updates_611952521",
     "cart_first_element":"#drawer > div > form > div.row.first",
     "cart_prod_price":"#drawer > div > form > div.row.first > div.two.columns.price.desktop",
     "cart_prod_total":"#drawer > div > form > div.row.first > div.two.columns.total.desktop",

@@ -1,0 +1,12 @@
+{
+    "first_name_above_limit":"skjnvlsivlinnkvbalkjvfelkrgbakjfvf lkl avlfkjsvnsalkjcvsdnclkabshavskjasakjv asklvbagjasbsvnhbrghrgkjbnrghruhrjkvnslviasvlawgjagknarjvnvu vliaruhsjfn",
+    "second_name_above_limit":"skjnvlsivlinnkvbalkjvfelkrgbakjfvf lkl avlfkjsvnsalkjcvsdnclkabshavskjasakjv asklvbagjasbsvnhbrghrgkjbnrghruhrjkvnslviasvlawgjagknarjvnvu vliaruhsjfn",
+    "first_name_below_limit":"le",
+    "second_name_below_limit":"le",
+    "invalid_email_formate":["$@gmail.com","testgmail.com","invalid_gmail","testing@gmailcom"],
+    "duplicate_email":"don@gmail.com",
+    "password_above_limits":"jkn@1233knfkndkmvkdvnlnsnavklakvsvnkfkfjfkljnvsalknskjsvjsfjsfnsnjljblnldvjlvjkvlfgkn",
+    "password_below_limits":"ab",
+    "invalid_password_formate":"ddddddd",
+    "sql_injection":"' OR 1=1 --"
+}

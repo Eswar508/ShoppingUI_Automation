@@ -1,6 +1,9 @@
-import os,time
+from datetime import datetime
+from pathlib import Path
+
+
 def save_screenshot(driver):
-    if not os.path.exists("results/screenshots"):
-        os.makedirs("results/screenshots")
-    timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-    driver.save_screenshot(f"results/screenshots/failed_{timestamp}.png")
+    screenshots_dir = Path("reports/screenshots")
+    screenshots_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")
+    driver.save_screenshot(screenshots_dir / f"failed_{timestamp}.png")

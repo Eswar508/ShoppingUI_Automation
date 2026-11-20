@@ -1,24 +1,48 @@
-import time
+import allure
 
-from pages.incrementation_page import AddToCartPage
+from pages.products_page import AddToCartPage
 
-from utils.wait import wait, wait_until
-def test_add_product_to_cart(element):
-    initial_cart_num=int(element.mycart_num.text[1:-1])  # Assuming the text is in the format "(X)"
-    AddToCartPage.increment_items_to_cart(element, item_index=0, clicking_no=1)
-    final_cart_num = int(element.mycart_num.text[1:-1])
-    # Assert that the number of items in the cart has increased by 1
-    assert final_cart_num == initial_cart_num + 1, f"Expected {initial_cart_num + 1} items in cart, but found {final_cart_num}."
-def test_add_catalog_items_to_cart(element):
-    initial_cart_num = int(element.mycart_num.text[1:-1]) 
-    AddToCartPage.add_catalog_items_to_cart(element)
-    final_cart_num = int(element.mycart_num.text[1:-1])
-    # Assert that the number of items in the cart has increased by 1
-    assert final_cart_num == initial_cart_num + 1, f"Expected {initial_cart_num + 1} items in cart, but found {final_cart_num}."
-def test_add_multiple_items_to_cart(element):
-    n=3  # Number of items to add
-    initial_cart_num = int(element.mycart_num.text[1:-1]) 
-    AddToCartPage.increment_items_to_cart(element, item_index=0, clicking_no=n)
-    final_cart_num = int(element.mycart_num.text[1:-1])
-    # Assert that the number of items in the cart has increased by 3
-    assert final_cart_num == initial_cart_num + n, f"Expected {initial_cart_num + n} items in cart, but found {final_cart_num}."
+
+pytestmark = allure.feature("Adding products to the cart")
+
+
+@allure.title("Add one product to the cart")
+def test_add_product_to_cart(driver):
+    page = AddToCartPage(driver)
+    initial_cart_num = page.get_mycart_num()
+    click_count = 1
+
+    page.click_prod(index=0, no_of_clicks=click_count)
+    final_cart_num = page.get_mycart_num()
+
+    assert final_cart_num == initial_cart_num + click_count
+
+
+@allure.title("Add a catalog product to the cart")
+def test_add_catalog_items_to_cart(driver):
+    page = AddToCartPage(driver)
+    initial_cart_num = page.get_mycart_num()
+
+    page.add_catalog_items_to_cart()
+    final_cart_num = page.get_mycart_num()
+
+    assert final_cart_num == initial_cart_num + 1
+
+
+@allure.title("Add multiple products to the cart")
+def test_add_multiple_items_to_cart(driver):
+    page = AddToCartPage(driver)
+    first_product_count = 3
+    second_product_count = 2
+    initial_cart_num = page.get_mycart_num()
+
+    page.click_prod(index=0, no_of_clicks=first_product_count)
+    page.driver.back()
+    page.click_prod(index=1, no_of_clicks=second_product_count)
+
+    expected_cart_num = (
+        initial_cart_num + first_product_count + second_product_count
+    )
+    final_cart_num = page.get_mycart_num()
+
+    assert final_cart_num == expected_cart_num

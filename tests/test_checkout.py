@@ -1,27 +1,77 @@
-from pages.incrementation_page import AddToCartPage
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-import time
-from utils.helper_fun import get_cart_total
-def test_checkout(element):
-    AddToCartPage.increment_items_to_cart(element, item_index=0, clicking_no=1)
-    element.checkout.click()
-    assert element.driver.current_url == "https://sauce-demo.myshopify.com/cart", f"Expected URL to be 'https://sauce-demo.myshopify.com/checkout', but got '{element.driver.current_url}'"
-def test_prod_total(element):
-    AddToCartPage.increment_items_to_cart(element, item_index=0, clicking_no=3)
-    element.checkout.click()
-    prod=element.checkouts_prod_list[0]
-    prod_price=float(prod.find_elements(By.TAG_NAME,"div")[2].text[1:])
-    prod_num=int(prod.find_element(By.TAG_NAME,"input").get_attribute("value"))
-    prod_total=float(prod.find_element(By.TAG_NAME,"span").text[1:])
-    assert prod_total==prod_price*prod_num,f"Expected product total to be {prod_price*prod_num}, but got {prod_total}"
-def test_cart_total(element):
-    AddToCartPage.increment_items_to_cart(element, item_index=0, clicking_no=3)
-    element.driver.back()
-    AddToCartPage.increment_items_to_cart(element, item_index=1, clicking_no=1)
-    element.wait.until(lambda driver: element.add_to_cart.is_enabled() is True)
-    element.checkout.click()
-    prod_list=element.checkouts_prod_list
-    prod_total=get_cart_total(prod_list)
-    cart_total=float(element.checkouts_total.text[7:])
-    assert cart_total==prod_total,f"Expected cart total to be {prod_total}, but got {cart_total}"
+import allure
+
+from pages.checkout_page import CheckoutPage
+
+
+pytestmark = allure.feature("Cart and checkout")
+
+
+@allure.title("Open the cart from a product")
+def test_checkout(driver):
+    page = CheckoutPage(driver)
+    page.prods_to_checkout(index=0, no_of_clicks=1)
+
+    expected_url = "https://sauce-demo.myshopify.com/cart"
+    assert driver.current_url == expected_url
+
+
+@allure.title("Show the selected product in the cart")
+def test_added_prods(driver):
+    page = CheckoutPage(driver)
+    product_name = page.get_prod_name(index=2)
+    product = page.prods_to_checkout(index=2, no_of_clicks=1)
+    cart_product_name = page.get_ckout_prod_name(product)
+
+    assert product_name in cart_product_name
+
+
+@allure.title("Calculate a product total")
+def test_prod_total(driver):
+    page = CheckoutPage(driver)
+    product = page.prods_to_checkout(index=0, no_of_clicks=3)
+    product_price = page.get_ckout_prod_price(product)
+    product_quantity = page.get_ckout_prod_num(product)
+    product_total = page.get_ckout_prod_total(product)
+    expected_total = product_price * product_quantity
+
+    assert product_total == expected_total
+
+
+@allure.title("Calculate the cart total")
+def test_cart_total(driver):
+    page = CheckoutPage(driver)
+    product = page.prods_to_checkout(index=0, no_of_clicks=3)
+    product_total = page.get_ckout_prod_total(product)
+    cart_total = float(page.get_element(page.checkouts_total).text[7:])
+
+    assert cart_total == product_total
+
+
+@allure.title("Update a product total after changing its quantity")
+def test_cart_total_after_updating_item(driver):
+    page = CheckoutPage(driver)
+    product = page.prods_to_checkout(index=0, no_of_clicks=1)
+    new_quantity = 5
+
+    page.update_ckout_prod_num(product, new_quantity)
+    updated_product = page.get_ckout_prod_list()[0]
+    product_price = page.get_ckout_prod_price(updated_product)
+    product_total = page.get_ckout_prod_total(updated_product)
+    expected_total = product_price * new_quantity
+
+    assert product_total == expected_total
+
+
+@allure.title("Update the cart total after changing quantity")
+def test_cart_prod_total_after_updating_item(driver):
+    page = CheckoutPage(driver)
+    product = page.prods_to_checkout(index=0, no_of_clicks=1)
+    new_quantity = 5
+
+    page.update_ckout_prod_num(product, new_quantity)
+    updated_product = page.get_ckout_prod_list()[0]
+    product_price = page.get_ckout_prod_price(updated_product)
+    cart_total = page.get_checkouts_total()
+    expected_total = product_price * new_quantity
+
+    assert cart_total == expected_total
