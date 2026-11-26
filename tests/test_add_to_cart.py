@@ -37,7 +37,7 @@ def test_add_multiple_items_to_cart(driver):
     initial_cart_num = page.get_mycart_num()
 
     page.click_prod(index=0, no_of_clicks=first_product_count)
-    page.driver.back()
+    page.get_home_element().click()
     page.click_prod(index=1, no_of_clicks=second_product_count)
 
     expected_cart_num = (

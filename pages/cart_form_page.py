@@ -1,5 +1,5 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as Ec
 
 from pages.base_page import BasePage
 
@@ -58,7 +58,7 @@ class CartFormPage(BasePage):
 
     def is_carts_form_displayed(self):
         form = self.wait_until(
-            EC.visibility_of_element_located(self.my_cart_form),
+            Ec.visibility_of_element_located(self.my_cart_form),
             timeout=5,
         )
         return form is not None
@@ -68,6 +68,7 @@ class CartFormPage(BasePage):
         quantity_input.clear()
         quantity_input.send_keys(str(quantity))
         quantity_input.send_keys("\n")
+        self.wait_until(Ec.staleness_of(quantity_input))
 
     def open_cart_form(self):
         self.get_cart_button().click()

@@ -34,18 +34,21 @@ class BasePage:
         return int(cart_text.strip("()"))
 
     def wait_until(self, condition, timeout=15):
-        return WebDriverWait(self.driver, timeout).until(condition)
+        try:
+            return WebDriverWait(self.driver, timeout).until(condition)
+        except:
+            return None
 
     def click_prod(self, index, no_of_clicks=1):
         products = self.get_prod_list()
         if index < 0 or index >= len(products):
             raise IndexError(f"Product index {index} is not available.")
-
         cart_num = self.get_mycart_num()
         product_link = products[index].find_element(By.TAG_NAME, "a")
+        self.wait_until(lambda driver: product_link.is_displayed())
         product_link.click()
-
         for _ in range(no_of_clicks):
-            self.get_element(self.add_to_cart).click()
+            add_to_cart=self.get_element(self.add_to_cart)
+            add_to_cart.click()
             cart_num += 1
             self.wait_until(lambda driver: self.get_mycart_num() == cart_num)

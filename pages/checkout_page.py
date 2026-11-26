@@ -16,8 +16,6 @@ class CheckoutPage(BasePage):
         self.click_prod(index=index,no_of_clicks=no_of_clicks)
         ckout=self.get_checkout()
         ckout.click()
-        prod=self.get_ckout_prod_list()[0]
-        return prod
     def get_ckout_prod_price(self,prod):
         return float(prod.find_elements(By.TAG_NAME,"div")[2].text[1:])
     def get_ckout_prod_num(self,prod):
@@ -34,5 +32,6 @@ class CheckoutPage(BasePage):
         input_field.clear()
         input_field.send_keys(str(new_quantity))
         input_field.send_keys("\n")  # Press Enter to update the quantity
+        self.wait_until(Ec.staleness_of(prod))
     def get_ckout_prod_name(self,prod):
         return prod.find_element(By.TAG_NAME,"h3").text
