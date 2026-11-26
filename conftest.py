@@ -16,8 +16,8 @@ def driver():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
-    if os.getenv("HEADLESS", "true").lower() == "true":
-        options.add_argument("--headless=new")
+    #if os.getenv("HEADLESS", "true").lower() == "true":
+    #    options.add_argument("--headless=new")
 
     chrome_path = os.getenv("CHROME_BIN")
     if chrome_path:

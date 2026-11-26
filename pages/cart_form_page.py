@@ -26,7 +26,9 @@ class CartFormPage(BasePage):
 
     def cart_prod_input(self):
         cart_form = self.get_element(self.my_cart_form)
-        return cart_form.find_element(By.TAG_NAME, "input")
+        e=cart_form.find_element(By.TAG_NAME, "input")
+        self.wait_until(lambda d:e.is_enabled() and e.is_displayed())
+        return e
 
     def get_cart_button(self):
         return self.get_element(self.my_cart_button)
